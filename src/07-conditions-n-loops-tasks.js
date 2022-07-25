@@ -409,38 +409,38 @@ function toNaryString(num, n) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  // throw new Error('Not implemented');
 
-  // function splitStrings(a) {
-  //   return a.map((i) => i.split('/'));
-  // }
+  function splitStrings(a) {
+    return a.map((i) => i.split('/'));
+  }
 
-  // function elAt(i) {
-  //   return (a) => a[i];
-  // }
+  function elAt(i) {
+    return (a) => a[i];
+  }
 
-  // function rotate(a) {
-  //   return a[0].map((e, i) => a.map(elAt(i)));
-  // }
+  function rotate(a) {
+    return a[0].map((e, i) => a.map(elAt(i)));
+  }
 
-  // function allElementsEqual(arr) {
-  //   return arr.every((e) => e === arr[0]);
-  // }
+  function allElementsEqual(arr) {
+    return arr.every((e) => e === arr[0]);
+  }
 
-  // function commonPath(input) {
-  //   return rotate(splitStrings(input, '/'))
-  //     .filter(allElementsEqual).map(elAt(0)).join('/');
-  // }
+  function commonPath(input) {
+    return rotate(splitStrings(input, '/'))
+      .filter(allElementsEqual).map(elAt(0)).join('/');
+  }
 
-  // let str = commonPath(pathes);
-  // if (str !== '') {
-  //   str += '/';
-  // } else if (pathes.length === pathes.reduce((prev, cur) => (cur[0] === '/'
-  //   ? prev + 1 : prev), 0)) {
-  //   str += '/';
-  // }
-  // return str;
+  let str = commonPath(pathes);
+  if (str !== '') {
+    str += '/';
+  } else if (pathes.length === pathes.reduce((prev, cur) => (cur[0] === '/'
+    ? prev + 1 : prev), 0)) {
+    str += '/';
+  }
+  return str;
 }
 
 
