@@ -127,18 +127,18 @@ function isTriangle(a, b, c) {
  *   { top:20, left:20, width: 20, height: 20 }    =>  false
  *
  */
-function doRectanglesOverlap(/* rect1, rect2 */) {
-  throw new Error('Not implemented');
-  // const minAx = rect1.left;
-  // const minAy = rect1.top;
-  // const maxAx = minAx + rect1.width;
-  // const maxAy = minAy + rect1.height;
-  // const minBx = rect2.left;
-  // const minBy = rect2.top;
-  // const maxBx = minBx + rect2.width;
-  // const maxBy = minBy + rect2.height;
+function doRectanglesOverlap(rect1, rect2) {
+  // throw new Error('Not implemented');
+  const minAx = rect1.left;
+  const minAy = rect1.top;
+  const maxAx = minAx + rect1.width;
+  const maxAy = minAy + rect1.height;
+  const minBx = rect2.left;
+  const minBy = rect2.top;
+  const maxBx = minBx + rect2.width;
+  const maxBy = minBy + rect2.height;
 
-  // return !(maxAx < minBx || minAx > maxBx || minAy > maxBy || maxAy < minBy);
+  return !(maxAx < minBx || minAx > maxBx || minAy > maxBy || maxAy < minBy);
 }
 
 
