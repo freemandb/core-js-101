@@ -79,8 +79,8 @@ function processAllPromises(array) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return Promise.race(array);
 }
 
 /**
@@ -100,8 +100,42 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+function chainPromises(array, action) {
+  return new Promise((resolve) => {
+    let count = array.length;
+    const retVals = new Array(array.length).fill(null);
+    array.map((item, ind) => {
+      item.then((value) => {
+        retVals[ind] = value;
+        count -= 1;
+        if (count === 0) {
+          resolve(retVals.filter((el) => el !== null).reduce((prev, cur) => {
+            if (prev === undefined) {
+              return cur;
+            }
+            if (cur === null) {
+              return prev;
+            }
+            return action(prev, cur);
+          }, undefined));
+        }
+      }).catch(() => {
+        count -= 1;
+        if (count === 0) {
+          resolve(retVals.filter((el) => el !== null).reduce((prev, cur) => {
+            if (prev === undefined) {
+              return cur;
+            }
+            if (cur === null) {
+              return prev;
+            }
+            return action(prev, cur);
+          }, undefined));
+        }
+      });
+      return item;
+    });
+  });
 }
 
 module.exports = {

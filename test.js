@@ -1,132 +1,50 @@
-const cssSelectorBuilder = {
-  element(value) {
-    const retObj = Object.create(this);
-    if (retObj.elementName) {
-      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
-    }
-    if (retObj.idName || retObj.className || retObj.attrName
-      || retObj.pseudoClassName || retObj.pseudoElementName) {
-      console.log(`id = ${retObj.idName}`);
-      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    retObj.elementName = value;
-    return retObj;
-  },
+function chainPromises(array, action) {
+  return new Promise((resolve) => {
+    let count = array.length;
+    const retVals = new Array(array.length).fill(null);
+    array.map((item, ind) => {
+      item.then((value) => {
+        retVals[ind] = value;
+        count -= 1;
+        if (count === 0) {
+          resolve(retVals.filter((el) => el !== null).reduce((prev, cur) => {
+            if (prev === undefined) {
+              return cur;
+            }
+            if (cur === null) {
+              return prev;
+            }
+            return action(prev, cur);
+          }, undefined));
+        }
+      }).catch(() => {
+        count -= 1;
+        if (count === 0) {
+          resolve(retVals.filter((el) => el !== null).reduce((prev, cur) => {
+            if (prev === undefined) {
+              return cur;
+            }
+            if (cur === null) {
+              return prev;
+            }
+            return action(prev, cur);
+          }, undefined));
+        }
+      });
+      return item;
+    });
+  });
+}
 
-  id(value) {
-    const retObj = Object.create(this);
-    if (retObj.idName) {
-      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
-    }
-    if (retObj.className || retObj.attrName
-      || retObj.pseudoClassName || retObj.pseudoElementName) {
-      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    retObj.idName = `#${value}`;
-    return retObj;
-  },
+const lorem = 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?';
+const promises = lorem.split(' ').map((item) => new Promise((resolve) => resolve(item)));
 
-  class(value) {
-    const retObj = Object.create(this);
-    if (retObj.attrName
-      || retObj.pseudoClassName || retObj.pseudoElementName) {
-      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    if (!retObj.className) {
-      retObj.className = [];
-    }
-    retObj.className.push(`.${value}`);
-    return retObj;
-  },
+const arrayForPromise = new Array(10).fill(0).map((_, idx) => idx);
+const result2 = chainPromises(arrayForPromise.map((item) => (item % 2
+  ? Promise.resolve(item)
+  : Promise.reject(Error(`Predictable Rejection ${item}`)))),
+(a, b) => a - b);
 
-  attr(value) {
-    const retObj = Object.create(this);
-    if (retObj.pseudoClassName || retObj.pseudoElementName) {
-      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    if (!retObj.attrName) {
-      retObj.attrName = [];
-    }
-    retObj.attrName.push(`[${value}]`);
-    return retObj;
-  },
-
-  pseudoClass(value) {
-    const retObj = Object.create(this);
-    if (retObj.pseudoElementName) {
-      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    if (!retObj.pseudoClassName) {
-      retObj.pseudoClassName = [];
-    }
-    retObj.pseudoClassName.push(`:${value}`);
-    return retObj;
-  },
-
-  pseudoElement(value) {
-    const retObj = Object.create(this);
-    if (retObj.pseudoElementName) {
-      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
-    }
-    retObj.pseudoElementName = `::${value}`;
-    return retObj;
-  },
-
-  combine(selector1, combinator, selector2) {
-    const ret = {
-      val1: selector1.stringify(),
-      val2: selector2.stringify(),
-      com: combinator,
-      stringify() {
-        return `${this.val1} ${this.com} ${this.val2}`;
-      },
-    };
-
-
-    return ret;
-  },
-
-  stringify() {
-    let retStr = '';
-    if (this.elementName) {
-      retStr += this.elementName;
-    }
-    if (this.idName) {
-      retStr += this.idName;
-    }
-    if (this.className) {
-      retStr += this.className.join('');
-    }
-    if (this.attrName) {
-      retStr += this.attrName.join('');
-    }
-    if (this.pseudoClassName) {
-      retStr += this.pseudoClassName.join('');
-    }
-    if (this.pseudoElementName) {
-      retStr += this.pseudoElementName;
-    }
-
-    return retStr;
-  },
-};
-
-const builder = cssSelectorBuilder;
-
-// builder.element('table').element('div');
-// builder.id('id1').id('id2');
-builder.pseudoElement('after').pseudoElement('before');
-
-// console.log(builder.combine(
-//   builder.element('div').id('main').class('container').class('draggable'),
-//   '+',
-//   builder.combine(
-//     builder.element('table').id('data'),
-//     '~',
-//     builder.combine(
-//       builder.element('tr').pseudoClass('nth-of-type(even)'),
-//       ' ',
-//       builder.element('td').pseudoClass('nth-of-type(even)'),
-//     ),
-//   ),
-// ).stringify());
+// chainPromises(promises, (a, b) => `${a} ${b}`).then((val) => console.log(val));
+result2.then((val) => console.log(val));
+// console.log(chainPromises.toString());
