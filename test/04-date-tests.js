@@ -119,11 +119,12 @@ describe('04-date-tasks', () => {
         date: Date.UTC(2016, 3, 5, 23, 55),
         expected: 0.4799655442984406, // 27.5 deg
       },
-    ].forEach((data) => {
+    ].forEach((data, ind) => {
+      console.log(`ind = ${ind}`);
       assert.equal(
         tasks.angleBetweenClockHands(new Date(data.date)),
         data.expected,
-        `Incorrect result for angleBetweenClockHands(${new Date(data.date).toUTCString()}):`,
+        `Incorrect result for angleBetweenClockHands(${new Date(data.date).toUTCString()} + ${ind}):`,
       );
     });
   });
