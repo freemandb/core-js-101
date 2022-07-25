@@ -401,12 +401,28 @@ function toNaryString(num, n) {
  */
 function getCommonDirectoryPath(pathes) {
   // throw new Error('Not implemented');
-  const splitStrings = (a) => a.map((i) => i.split('/'));
-  const elAt = (i) => (a) => a[i];
-  const rotate = (a) => a[0].map((e, i) => a.map(elAt(i)));
-  const allElementsEqual = (arr) => arr.every((e) => e === arr[0]);
-  const commonPath = (input, sep = '/') => rotate(splitStrings(input, sep))
-    .filter(allElementsEqual).map(elAt(0)).join(sep);
+
+  function splitStrings(a) {
+    return a.map((i) => i.split('/'));
+  }
+
+  function elAt(i) {
+    return (a) => a[i];
+  }
+
+  function rotate(a) {
+    return a[0].map((e, i) => a.map(elAt(i)));
+  }
+
+  function allElementsEqual(arr) {
+    return arr.every((e) => e === arr[0]);
+  }
+
+  function commonPath(input) {
+    return rotate(splitStrings(input, '/'))
+      .filter(allElementsEqual).map(elAt(0)).join('/');
+  }
+
   let str = commonPath(pathes);
   if (str !== '') {
     str += '/';
