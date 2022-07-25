@@ -130,7 +130,6 @@ const cssSelectorBuilder = {
     }
     if (retObj.idName || retObj.className || retObj.attrName
       || retObj.pseudoClassName || retObj.pseudoElementName) {
-      console.log(`id = ${retObj.idName}`);
       throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
     }
     retObj.elementName = value;
